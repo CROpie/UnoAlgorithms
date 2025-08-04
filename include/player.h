@@ -8,14 +8,14 @@ class Player {
     public:
         std::string name;
         std::vector<Card> hand;
-        std::vector<Card> filteredHand;
 
         Player(std::string name);
 
         void printName();
-        void printCards();
+        void printHand();
+        void printCards(std::vector<Card> cards);
         void printDeckSize();
-        void printValidCards();
 
-        void filterValidHand(Card topOfDiscard);
+        std::vector<Card> filterValidHand(Card topOfDiscard);
+        void removeCard(Card playedCard);
 };

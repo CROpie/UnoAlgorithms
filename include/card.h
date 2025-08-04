@@ -39,4 +39,6 @@ class Card {
         bool cmpColour(Card& other);
         bool cmpValue(Card& other);
         bool isValid(Card& other);
+
+        bool operator==(const Card& other) const;
 };

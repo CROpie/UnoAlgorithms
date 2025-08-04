@@ -44,3 +44,7 @@ bool Card::isValid(Card& other) {
     if ((this->colour == other.colour) || (this->value == other.value)) return true;
     return false;
 }
+
+bool Card::operator==(const Card& other) const {
+    return ((this->colour == other.colour) && (this->value == other.value));
+}

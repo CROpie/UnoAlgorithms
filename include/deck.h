@@ -21,5 +21,10 @@ class Deck {
         void flipCard();
         void printDiscard();
 
+        void haveCardDrawn(Player& player);
+
+        void playCard(Card&& cardToPlay);
+
+
         Deck();
 };

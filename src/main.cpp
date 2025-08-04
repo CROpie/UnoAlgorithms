@@ -3,25 +3,28 @@
 #include <string>
 #include "card.h"
 #include "deck.h"
+#include "game.h"
 
 int main() {
-  Deck deck;
-  deck.shuffle();
-  std::vector<Player> players;
+  Game game;
 
-  players.emplace_back("chris");
-  players.emplace_back("leah");
+  game.shuffleDeck();
 
-  deck.deal(players, 3);
-  deck.flipCard();
+  game.addPlayer(Player("chris"));
+  game.addPlayer(Player("leah"));
 
-  players[0].printName();
-  players[0].printCards();
-  players[0].filterValidHand(deck.discard_pile.back());
+  game.dealToPlayers(3);
 
-  players[1].printName();
-  players[1].printCards();
-  players[1].filterValidHand(deck.discard_pile.back());
+  // while (true) {
+  for (int i = 0; i < 20; i++) {
+    game.printDiscard();
+    game.play();
+    game.printDiscard();
+
+    if (game.hasPlayerWon()) break;
+
+    game.advanceTurn();
+  }
 
   return 0;
 }

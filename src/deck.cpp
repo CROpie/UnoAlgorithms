@@ -17,12 +17,13 @@ void Deck::flipCard() {
     std::cout << "--Flipping over a card--" << std::endl;
     if (draw_pile.empty()) {
         this->addBack();
+        return;
     }
-    Card card = std::move(draw_pile.back());
+    
+    discard_pile.emplace_back(std::move(draw_pile.back()));
     draw_pile.pop_back();
-    discard_pile.emplace_back(std::move(card));
 
-    card.printCard();
+    discard_pile.back().printCard();
 }
 
 void Deck::printDiscard() {
@@ -51,9 +52,22 @@ void Deck::addBack() {
 void Deck::deal(std::vector<Player>& players, int cardCount) {
     for (auto& player : players) {
         for (int i = 0; i < cardCount; ++i) {
-            Card card = std::move(draw_pile.back());
+            player.hand.emplace_back(std::move(draw_pile.back()));
             draw_pile.pop_back();
-            player.hand.emplace_back(std::move(card));
         }
     }
+}
+
+void Deck::playCard(Card&& cardToPlay) {
+    cardToPlay.printCard();
+
+    std::cout <<  + "...has been played" << std::endl;
+    
+    discard_pile.emplace_back(std::move(cardToPlay));
+}
+
+void Deck::haveCardDrawn(Player& player) {
+    Card card = std::move(draw_pile.back());
+    draw_pile.pop_back();
+    player.hand.emplace_back(std::move(card));
 }
