@@ -7,11 +7,14 @@
 enum class Value {
     zero,
     one,
-    two
+    two,
+    three,
+    four,
+    five
 };
 
-constexpr std::array<Value, 3> all_values = {
-    Value::zero, Value::one, Value::two
+constexpr std::array<Value, 6> all_values = {
+    Value::zero, Value::one, Value::two, Value::three, Value::four, Value::five
 };
 
 enum class Colour {
@@ -35,4 +38,5 @@ class Card {
 
         bool cmpColour(Card& other);
         bool cmpValue(Card& other);
+        bool isValid(Card& other);
 };

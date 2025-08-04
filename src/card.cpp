@@ -6,6 +6,9 @@ std::string toString(Value value) {
         case Value::zero: return "zero";
         case Value::one: return "one";
         case Value::two: return "two";
+        case Value::three: return "three";
+        case Value::four: return "four";
+        case Value::five: return "five";
         default: return "unknown";
     };
 }
@@ -35,4 +38,9 @@ bool Card::cmpColour(Card& other) {
 
 bool Card::cmpValue(Card& other) {
     return this->value == other.value;
+}
+
+bool Card::isValid(Card& other) {
+    if ((this->colour == other.colour) || (this->value == other.value)) return true;
+    return false;
 }

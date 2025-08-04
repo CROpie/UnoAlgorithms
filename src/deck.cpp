@@ -14,12 +14,15 @@ Deck::Deck()
     : draw_pile(generateAllCards()), discard_pile() {}
 
 void Deck::flipCard() {
+    std::cout << "--Flipping over a card--" << std::endl;
     if (draw_pile.empty()) {
         this->addBack();
     }
     Card card = std::move(draw_pile.back());
     draw_pile.pop_back();
     discard_pile.emplace_back(std::move(card));
+
+    card.printCard();
 }
 
 void Deck::printDiscard() {
@@ -27,17 +30,30 @@ void Deck::printDiscard() {
 }
 
 void Deck::shuffle() {
+    std::cout << "--Shuffling the cards--" << std::endl;
     std::random_device rd;
     std::mt19937 g(rd());
     std::shuffle(draw_pile.begin(), draw_pile.end(), g);
 }
 
 void Deck::addBack() {
+    std::cout << "--Adding discard back into the deck--" << std::endl;
     draw_pile.insert(
         draw_pile.end(),
         std::make_move_iterator(discard_pile.begin()),
         std::make_move_iterator(discard_pile.end())
     );
     discard_pile.clear();
+    
     this->shuffle();
+}
+
+void Deck::deal(std::vector<Player>& players, int cardCount) {
+    for (auto& player : players) {
+        for (int i = 0; i < cardCount; ++i) {
+            Card card = std::move(draw_pile.back());
+            draw_pile.pop_back();
+            player.hand.emplace_back(std::move(card));
+        }
+    }
 }

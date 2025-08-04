@@ -1,4 +1,5 @@
 #include "card.h"
+#include "player.h"
 #include <vector>
 #include <algorithm>
 #include <random>
@@ -14,11 +15,11 @@ class Deck {
         void shuffle();
         void addBack();
 
+        void deal(std::vector<Player>& players, int cardCount);
+
         // draw -> discard
         void flipCard();
         void printDiscard();
-
-
 
         Deck();
 };
