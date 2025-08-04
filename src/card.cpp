@@ -18,12 +18,15 @@ std::string toString(Colour colour) {
     };
 }
 
-// constructor
-Card::Card(Value value, Colour colour)
-    : value(value), colour(colour) {}
+Card::Card(Colour colour, Value value)
+    : colour(colour), value(value) {}
 
 std::string Card::toString() {
     return "{ " + ::toString(this->colour) + " " + ::toString(this->value) + " }";
+}
+
+void Card::printCard() {
+    std::cout << this->toString() << std::endl;
 }
 
 bool Card::cmpColour(Card& other) {

@@ -2,9 +2,9 @@
 #include <catch2/catch.hpp>
 #include "card.h"
 
-Card card1{Value::two, Colour::red};
-Card card2{Value::zero, Colour::red};
-Card card3{Value::two, Colour::yellow};
+Card card1{Colour::red, Value::two};
+Card card2{Colour::red, Value::zero};
+Card card3{Colour::yellow, Value::two};
 
 TEST_CASE("Card colour comparison works", "[Card]") {
     REQUIRE(card1.cmpColour(card2) == true);

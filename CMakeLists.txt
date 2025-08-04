@@ -30,4 +30,4 @@ target_link_libraries(card_tests PRIVATE Catch2::Catch2)
 enable_testing()
 add_test(NAME CardTests COMMAND card_tests)
 
-add_executable(uno_algo src/main.cpp src/card.cpp)
+add_executable(uno_algo src/main.cpp src/card.cpp src/deck.cpp)

@@ -1,5 +1,6 @@
 #include <string>
 #include <array>
+#include <iostream>
 
 #pragma once
 
@@ -24,12 +25,13 @@ constexpr std::array<Colour, 2> all_colours = {
 
 class Card {
     public:
-        Value value;
         Colour colour;
+        Value value;
 
-        Card(Value value, Colour colour);
+        Card(Colour colour, Value value);
 
         std::string toString();
+        void printCard();
 
         bool cmpColour(Card& other);
         bool cmpValue(Card& other);
