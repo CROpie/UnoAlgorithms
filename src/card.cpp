@@ -9,6 +9,10 @@ std::string toString(Value value) {
         case Value::three: return "three";
         case Value::four: return "four";
         case Value::five: return "five";
+        case Value::six: return "six";
+        case Value::seven: return "seven";
+        case Value::eight: return "eight";
+        case Value::nine: return "nine";
         default: return "unknown";
     };
 }
@@ -17,6 +21,8 @@ std::string toString(Colour colour) {
     switch (colour) {
         case Colour::red: return "red";
         case Colour::yellow: return "yellow";
+        case Colour::green: return "green";
+        case Colour::blue: return "blue";
         default: return "unknown";
     };
 }
@@ -26,6 +32,10 @@ Card::Card(Colour colour, Value value)
 
 std::string Card::toString() {
     return "{ " + ::toString(this->colour) + " " + ::toString(this->value) + " }";
+}
+
+std::string Card::getTextureKey() const {
+    return ::toString(this->colour) + "_" + ::toString(this->value);
 }
 
 void Card::printCard() {

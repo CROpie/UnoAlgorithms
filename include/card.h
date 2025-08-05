@@ -10,20 +10,27 @@ enum class Value {
     two,
     three,
     four,
-    five
+    five,
+    six,
+    seven,
+    eight,
+    nine
 };
 
-constexpr std::array<Value, 6> all_values = {
-    Value::zero, Value::one, Value::two, Value::three, Value::four, Value::five
+constexpr std::array<Value, 10> all_values = {
+    Value::zero, Value::one, Value::two, Value::three, Value::four, 
+    Value::five, Value::six, Value::seven, Value::eight, Value::nine
 };
 
 enum class Colour {
     red,
-    yellow
+    yellow,
+    green,
+    blue
 };
 
-constexpr std::array<Colour, 2> all_colours = {
-    Colour::red, Colour::yellow
+constexpr std::array<Colour, 4> all_colours = {
+    Colour::red, Colour::yellow, Colour::green, Colour::blue
 };
 
 class Card {
@@ -34,6 +41,7 @@ class Card {
         Card(Colour colour, Value value);
 
         std::string toString();
+        std::string getTextureKey() const;
         void printCard();
 
         bool cmpColour(Card& other);

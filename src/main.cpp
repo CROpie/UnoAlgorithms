@@ -4,27 +4,33 @@
 #include "card.h"
 #include "deck.h"
 #include "game.h"
+#include "renderer.h"
+#include <SFML/Graphics.hpp>
 
 int main() {
+   sf::RenderWindow window(sf::VideoMode(800, 600), "Uno Algo");
+
   Game game;
 
   game.shuffleDeck();
 
-  game.addPlayer(Player("chris"));
-  game.addPlayer(Player("leah"));
+  game.addPlayer(Player("chris", 1));
+  game.addPlayer(Player("leah", 2));
 
-  game.dealToPlayers(3);
+  game.dealToPlayers(7);
 
-  // while (true) {
-  for (int i = 0; i < 20; i++) {
-    game.printDiscard();
-    game.play();
-    game.printDiscard();
+  Renderer renderer(window);
 
-    if (game.hasPlayerWon()) break;
+  while (window.isOpen()) {
+    sf::Event event;
+    while (window.pollEvent(event))
+      if (event.type == sf::Event::Closed) window.close();
 
-    game.advanceTurn();
+      game.play();
+      renderer.render(game);
+      sf::sleep(sf::milliseconds(1000));
+      if (game.hasPlayerWon()) return 0;
+      game.advanceTurn();
   }
-
   return 0;
 }

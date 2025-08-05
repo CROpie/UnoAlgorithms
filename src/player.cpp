@@ -1,8 +1,8 @@
 #include "player.h"
 
 
-Player::Player(std::string name)
-    : name(name) {}
+Player::Player(std::string name, int playerNumber)
+    : name(name), playerNumber(playerNumber) {}
 
 void Player::printName() {
     std::cout << this->name << std::endl;

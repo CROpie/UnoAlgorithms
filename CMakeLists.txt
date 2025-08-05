@@ -5,15 +5,15 @@ set(CMAKE_CXX_STANDARD 20)
 
 include_directories(include)
 
-# Create a library from your source files
+# ---- Card Library ----
 add_library(card_lib src/card.cpp)
 
+# ---- Unit Tests ----
 add_executable(card_tests test/card_tests.cpp)
 
-# Link the library to the test executable
 target_link_libraries(card_tests PRIVATE card_lib)
 
-# (Optional) Use FetchContent to get Catch2 for testing
+# Catch2
 include(FetchContent)
 
 FetchContent_Declare(
@@ -26,8 +26,16 @@ FetchContent_MakeAvailable(catch2)
 
 target_link_libraries(card_tests PRIVATE Catch2::Catch2)
 
-# Enable CTest and register your test executable
 enable_testing()
 add_test(NAME CardTests COMMAND card_tests)
 
-add_executable(uno_algo src/main.cpp src/card.cpp src/deck.cpp src/player.cpp src/game.cpp)
+# ---- SFML Executable
+# Find SMFL
+
+find_package(SFML 2.5 REQUIRED COMPONENTS graphics window system)
+
+add_executable(uno_algo src/main.cpp src/card.cpp src/deck.cpp src/player.cpp src/game.cpp src/renderer.cpp)
+
+# Link SFML and card lib
+
+target_link_libraries(uno_algo PRIVATE card_lib sfml-graphics sfml-window sfml-system)

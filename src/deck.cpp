@@ -59,14 +59,24 @@ void Deck::deal(std::vector<Player>& players, int cardCount) {
 }
 
 void Deck::playCard(Card&& cardToPlay) {
-    cardToPlay.printCard();
+    // cardToPlay.printCard();
 
-    std::cout <<  + "...has been played" << std::endl;
+    // std::cout <<  + "...has been played" << std::endl;
     
     discard_pile.emplace_back(std::move(cardToPlay));
 }
 
 void Deck::haveCardDrawn(Player& player) {
+
+    // logic for keeping the final card of discard present
+    // and shuffling the rest into draw pile
+    if (draw_pile.empty()) {
+        Card discard = std::move(discard_pile.back());
+        discard_pile.pop_back();
+        this->addBack();
+        discard_pile.emplace_back(std::move(discard));
+    }
+
     Card card = std::move(draw_pile.back());
     draw_pile.pop_back();
     player.hand.emplace_back(std::move(card));
