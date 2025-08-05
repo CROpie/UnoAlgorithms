@@ -4,6 +4,7 @@
 #include "card.h"
 #include "deck.h"
 #include "game.h"
+#include "player.h"
 #include "renderer.h"
 #include <SFML/Graphics.hpp>
 
@@ -14,8 +15,8 @@ int main() {
 
   game.shuffleDeck();
 
-  game.addPlayer(Player("chris", 1));
-  game.addPlayer(Player("leah", 2));
+  game.addPlayer(Player("chris", 1, Strategy::number));
+  game.addPlayer(Player("leah", 2, Strategy::colour));
 
   game.dealToPlayers(7);
 

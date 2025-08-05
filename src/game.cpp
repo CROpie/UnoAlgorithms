@@ -39,8 +39,19 @@ void Game::play() {
         return;
     }
 
+    Card validCard;
 
-    Card validCard = filteredHand.back();
+    switch (current.strategy) {
+        case Strategy::back:
+            validCard = getBackCard(filteredHand);
+            break;
+        case Strategy::colour:
+            validCard = getSameColourCard(filteredHand, current, topOfDiscard);
+            break;
+        case Strategy::number:
+            validCard = getSameValueCard(filteredHand, current, topOfDiscard);
+            break;
+    }
 
     auto it = std::find(current.hand.begin(), current.hand.end(), validCard);
     Card cardToPlay = std::move(*it);
@@ -48,6 +59,28 @@ void Game::play() {
     deck.playCard(std::move(cardToPlay));
 
     
+}
+
+Card Game::getBackCard(std::vector<Card>& filteredHand) {
+    return filteredHand.back();
+}
+
+Card Game::getSameColourCard(std::vector<Card>& filteredHand, Player& current, Card& topOfDiscard) {
+    std::vector<Card> subset = current.filterForSameColour(filteredHand, topOfDiscard);
+
+    if (subset.size() == 0) {
+        return filteredHand.back();
+    }
+    return subset.back();
+}
+
+Card Game::getSameValueCard(std::vector<Card>& filteredHand, Player& current, Card& topOfDiscard) {
+    std::vector<Card> subset = current.filterForSameValue(filteredHand, topOfDiscard);
+
+    if (subset.size() == 0) {
+        return filteredHand.back();
+    }
+    return subset.back();
 }
 
 void Game::advanceTurn() {

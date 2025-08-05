@@ -1,7 +1,7 @@
 #include "player.h"
 
 
-Player::Player(std::string name, int playerNumber)
+Player::Player(std::string name, int playerNumber, Strategy strategy)
     : name(name), playerNumber(playerNumber) {}
 
 void Player::printName() {
@@ -28,10 +28,28 @@ void Player::printDeckSize() {
 }
 
 std::vector<Card> Player::filterValidHand(Card topOfDiscard) {
-    std::cout << this->name + "'s valid hand" << std::endl;
+    // std::cout << this->name + "'s valid hand" << std::endl;
     std::vector<Card> filtered;
     for(auto card : hand) {
         if (card.isValid(topOfDiscard)) filtered.emplace_back(card);
+    }
+
+    return filtered;
+}
+
+std::vector<Card> Player::filterForSameColour(std::vector<Card> filteredHand, Card topOfDiscard) {
+    std::vector<Card> filtered;
+    for(auto card : hand) {
+        if (card.cmpColour(topOfDiscard)) filtered.emplace_back(card);
+    }
+
+    return filtered;
+}
+
+std::vector<Card> Player::filterForSameValue(std::vector<Card> filteredHand, Card topOfDiscard) {
+    std::vector<Card> filtered;
+    for(auto card : hand) {
+        if (card.cmpValue(topOfDiscard)) filtered.emplace_back(card);
     }
 
     return filtered;

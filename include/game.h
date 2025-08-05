@@ -28,4 +28,8 @@ class Game {
         void play();
 
         void advanceTurn();
+
+        Card getBackCard(std::vector<Card>& filteredHand);
+        Card getSameColourCard(std::vector<Card>& filteredHand, Player& current, Card& topOfDiscard);
+        Card getSameValueCard(std::vector<Card>& filteredHand, Player& current, Card& topOfDiscard);
 };

@@ -30,6 +30,9 @@ std::string toString(Colour colour) {
 Card::Card(Colour colour, Value value)
     : colour(colour), value(value) {}
 
+Card::Card()
+    : colour(Colour::red), value(Value::zero) {}
+
 std::string Card::toString() {
     return "{ " + ::toString(this->colour) + " " + ::toString(this->value) + " }";
 }

@@ -4,7 +4,13 @@ std::vector<Card> Deck::generateAllCards() {
     std::vector<Card> cards;
     for (auto colour : all_colours) {
         for (auto value : all_values) {
-            cards.emplace_back(colour, value);
+            if (value == Value::zero) {
+                cards.emplace_back(colour, value);
+            } else {
+                cards.emplace_back(colour, value);
+                cards.emplace_back(colour, value);
+            }
+
         }
     }
     return cards;

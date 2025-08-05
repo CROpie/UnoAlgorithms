@@ -39,6 +39,7 @@ class Card {
         Value value;
 
         Card(Colour colour, Value value);
+        Card();
 
         std::string toString();
         std::string getTextureKey() const;
