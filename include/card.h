@@ -45,9 +45,9 @@ class Card {
         std::string getTextureKey() const;
         void printCard();
 
-        bool cmpColour(Card& other);
-        bool cmpValue(Card& other);
-        bool isValid(Card& other);
+        bool cmpColour(const Card& other) const;
+        bool cmpValue(const Card& other) const;
+        bool isValid(const Card& other) const;
 
         bool operator==(const Card& other) const;
 };

@@ -13,18 +13,9 @@ class Deck {
 
         std::vector<Card> generateAllCards();
         void shuffle();
-        void addBack();
+        void reshuffle();
 
-        void deal(std::vector<Player>& players, int cardCount);
-
-        // draw -> discard
-        void flipCard();
         void printDiscard();
-
-        void haveCardDrawn(Player& player);
-
-        void playCard(Card&& cardToPlay);
-
 
         Deck();
 };

@@ -8,7 +8,7 @@ std::vector<Card> Deck::generateAllCards() {
                 cards.emplace_back(colour, value);
             } else {
                 cards.emplace_back(colour, value);
-                cards.emplace_back(colour, value);
+                // cards.emplace_back(colour, value);
             }
 
         }
@@ -18,19 +18,6 @@ std::vector<Card> Deck::generateAllCards() {
 
 Deck::Deck()
     : draw_pile(generateAllCards()), discard_pile() {}
-
-void Deck::flipCard() {
-    std::cout << "--Flipping over a card--" << std::endl;
-    if (draw_pile.empty()) {
-        this->addBack();
-        return;
-    }
-    
-    discard_pile.emplace_back(std::move(draw_pile.back()));
-    draw_pile.pop_back();
-
-    discard_pile.back().printCard();
-}
 
 void Deck::printDiscard() {
     discard_pile.back().printCard();
@@ -43,47 +30,15 @@ void Deck::shuffle() {
     std::shuffle(draw_pile.begin(), draw_pile.end(), g);
 }
 
-void Deck::addBack() {
-    std::cout << "--Adding discard back into the deck--" << std::endl;
+void Deck::reshuffle() {
+    if (discard_pile.size() <= 1) throw std::runtime_error("Error: no discarded cards in Deck::reshuffle()");
+
     draw_pile.insert(
         draw_pile.end(),
         std::make_move_iterator(discard_pile.begin()),
-        std::make_move_iterator(discard_pile.end())
+        std::make_move_iterator(discard_pile.end() - 1)
     );
-    discard_pile.clear();
+    discard_pile.erase(discard_pile.begin(), discard_pile.end() - 1);
     
-    this->shuffle();
-}
-
-void Deck::deal(std::vector<Player>& players, int cardCount) {
-    for (auto& player : players) {
-        for (int i = 0; i < cardCount; ++i) {
-            player.hand.emplace_back(std::move(draw_pile.back()));
-            draw_pile.pop_back();
-        }
-    }
-}
-
-void Deck::playCard(Card&& cardToPlay) {
-    // cardToPlay.printCard();
-
-    // std::cout <<  + "...has been played" << std::endl;
-    
-    discard_pile.emplace_back(std::move(cardToPlay));
-}
-
-void Deck::haveCardDrawn(Player& player) {
-
-    // logic for keeping the final card of discard present
-    // and shuffling the rest into draw pile
-    if (draw_pile.empty()) {
-        Card discard = std::move(discard_pile.back());
-        discard_pile.pop_back();
-        this->addBack();
-        discard_pile.emplace_back(std::move(discard));
-    }
-
-    Card card = std::move(draw_pile.back());
-    draw_pile.pop_back();
-    player.hand.emplace_back(std::move(card));
+    shuffle();
 }

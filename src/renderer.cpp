@@ -1,7 +1,12 @@
 #include <renderer.h>
 
-Renderer::Renderer(sf::RenderWindow& window)
-    : window(window) { loadTextures(); }
+Renderer::Renderer(sf::RenderWindow& window): window(window) { 
+
+    if (!font.loadFromFile("../assets/fonts/arial.ttf")) {
+        throw std::runtime_error("Failed to load font!");
+    }
+    loadTextures();
+}
 
 std::string toVString(Value value) {
     switch (value) {
@@ -48,8 +53,29 @@ void Renderer::loadTextures() {
 
 void Renderer::render(const Game& game) {
     window.clear();
+
     for (const Player& player : game.players) {
         int yPos = player.playerNumber == 1 ? TOP : BOTTOM;
+
+        int yOffset = 0;
+        sf::Text playerText;
+        playerText.setFont(font);
+        playerText.setCharacterSize(FONT_SIZE);
+        playerText.setFillColor(TEXT_COLOUR);
+        playerText.setPosition(RIGHT_PADDING, yPos + yOffset);
+        playerText.setString(player.name);
+        window.draw(playerText);
+
+        yOffset += 30;
+        playerText.setPosition(RIGHT_PADDING, yPos + yOffset);
+        playerText.setString(strategyToString(player.strategy));
+        window.draw(playerText);
+
+        yOffset += 30;
+        playerText.setPosition(RIGHT_PADDING, yPos + yOffset);
+        playerText.setString(std::to_string(player.wins));
+        window.draw(playerText);
+
         int offset = 0;
         for (const Card& card : player.hand) {
             sf::Sprite sprite;

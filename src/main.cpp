@@ -15,10 +15,10 @@ int main() {
 
   game.shuffleDeck();
 
-  game.addPlayer(Player("chris", 1, Strategy::number));
-  game.addPlayer(Player("leah", 2, Strategy::colour));
+  game.addPlayer(Player("chris", 1, Strategy::colour));
+  game.addPlayer(Player("leah", 2, Strategy::number));
 
-  game.dealToPlayers(7);
+  game.dealStartingCards(game.HAND_SIZE);
 
   Renderer renderer(window);
 
@@ -29,8 +29,20 @@ int main() {
 
       game.play();
       renderer.render(game);
-      sf::sleep(sf::milliseconds(1000));
-      if (game.hasPlayerWon()) return 0;
+
+      sf::sleep(sf::milliseconds(100));
+
+      if (game.hasPlayerWon()) {
+        game.awardWin();
+        if (game.hasPlayerWonNGames(game.REQ_WINS)) { 
+          game.logWins("../game_log.txt");
+          return 0;
+        }
+
+        game.finishAndRestart();
+        continue;
+      }
+      
       game.advanceTurn();
   }
   return 0;

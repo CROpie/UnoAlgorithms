@@ -45,15 +45,15 @@ void Card::printCard() {
     std::cout << this->toString() << std::endl;
 }
 
-bool Card::cmpColour(Card& other) {
+bool Card::cmpColour(const Card& other) const {
     return this->colour == other.colour;
 }
 
-bool Card::cmpValue(Card& other) {
+bool Card::cmpValue(const Card& other) const {
     return this->value == other.value;
 }
 
-bool Card::isValid(Card& other) {
+bool Card::isValid(const Card& other) const {
     if ((this->colour == other.colour) || (this->value == other.value)) return true;
     return false;
 }

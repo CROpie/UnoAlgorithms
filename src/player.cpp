@@ -1,8 +1,21 @@
 #include "player.h"
 
+std::string strategyToString(Strategy strategy) {
+    switch (strategy) {
+        case Strategy::back: return "Back";
+        case Strategy::random: return "Random";
+        case Strategy::colour: return "Colour";
+        case Strategy::number: return "Number";
+        default: return "Unknown";
+    }
+}
 
 Player::Player(std::string name, int playerNumber, Strategy strategy)
-    : name(name), playerNumber(playerNumber) {}
+    : name(name), playerNumber(playerNumber), strategy(strategy) {}
+
+void Player::clearHand() {
+    hand.clear();
+}
 
 void Player::printName() {
     std::cout << this->name << std::endl;
@@ -25,32 +38,4 @@ void Player::printCards(std::vector<Card> cards) {
 
 void Player::printDeckSize() {
     std::cout << this->hand.size() << std::endl;
-}
-
-std::vector<Card> Player::filterValidHand(Card topOfDiscard) {
-    // std::cout << this->name + "'s valid hand" << std::endl;
-    std::vector<Card> filtered;
-    for(auto card : hand) {
-        if (card.isValid(topOfDiscard)) filtered.emplace_back(card);
-    }
-
-    return filtered;
-}
-
-std::vector<Card> Player::filterForSameColour(std::vector<Card> filteredHand, Card topOfDiscard) {
-    std::vector<Card> filtered;
-    for(auto card : hand) {
-        if (card.cmpColour(topOfDiscard)) filtered.emplace_back(card);
-    }
-
-    return filtered;
-}
-
-std::vector<Card> Player::filterForSameValue(std::vector<Card> filteredHand, Card topOfDiscard) {
-    std::vector<Card> filtered;
-    for(auto card : hand) {
-        if (card.cmpValue(topOfDiscard)) filtered.emplace_back(card);
-    }
-
-    return filtered;
 }

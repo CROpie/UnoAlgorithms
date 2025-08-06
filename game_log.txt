@@ -1,0 +1,4 @@
+ Game completed. Required wins: 5
+Player: Colour, Wins: 5
+Player: Number, Wins: 2
+----------------------

@@ -11,21 +11,24 @@ enum class Strategy {
     number
 };
 
+std::string strategyToString(Strategy strategy);
+
 class Player {
     public:
         std::string name;
         int playerNumber;
         Strategy strategy;
         std::vector<Card> hand;
+        int wins{0};
 
         Player(std::string name, int playerNumber, Strategy strategy);
+
+        void clearHand();
 
         void printName();
         void printHand();
         void printCards(std::vector<Card> cards);
         void printDeckSize();
 
-        std::vector<Card> filterValidHand(Card topOfDiscard);
-        std::vector<Card> filterForSameColour(std::vector<Card> filteredHand, Card topOfDiscard);
-        std::vector<Card> filterForSameValue(std::vector<Card> filteredHand, Card topOfDiscard);
+
 };
