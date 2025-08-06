@@ -2,3 +2,39 @@
 Player: Colour, Wins: 5
 Player: Number, Wins: 2
 ----------------------
+ Game completed. Required wins: 5
+Player: Colour, Wins: 5
+Player: Number, Wins: 4
+----------------------
+ Game completed. Required wins: 5
+Player: Colour, Wins: 3
+Player: Number, Wins: 5
+----------------------
+ Game completed in 0. Required wins: 5
+Player: Colour, Wins: 1
+Player: Number, Wins: 5
+----------------------
+ Game completed in 476911. Required wins: 5
+Player: Colour, Wins: 5
+Player: Number, Wins: 4
+----------------------
+ Game completed in 322781. Required wins: 5
+Player: Colour, Wins: 2
+Player: Number, Wins: 5
+----------------------
+ Game completed in 461 microseconds. Required wins: 5
+Player: Colour, Wins: 5
+Player: Number, Wins: 4
+----------------------
+ Game completed in 72784 microseconds. Required wins: 1000
+Player: Colour, Wins: 1000
+Player: Number, Wins: 930
+----------------------
+ Game completed in 75166 microseconds. Required wins: 1000
+Player: Colour, Wins: 1000
+Player: Number, Wins: 906
+----------------------
+ Game completed in 68077760 microseconds. Required wins: 1000000
+Player: Colour, Wins: 1000000
+Player: Number, Wins: 884122
+----------------------

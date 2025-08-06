@@ -164,11 +164,11 @@ bool Game::hasPlayerWonNGames(int requiredWins) {
     return false;
 }
 
-void Game::logWins(const std::string& filename) {
+void Game::logWins(const std::string& filename, int elapsedTime) {
     std::ofstream logFile(filename, std::ios::app);
 
     if (!logFile.is_open()) throw std::runtime_error("Error: unable to open log file in Game::logWins()");
-    logFile << " Game completed. Required wins: " << REQ_WINS << "\n";
+    logFile << " Game completed in " << elapsedTime << " microseconds. Required wins: " << REQ_WINS << "\n";
     for (const auto& player : players) {
         logFile << "Player: " << strategyToString(player.strategy) << ", Wins: " << player.wins << "\n";
     }

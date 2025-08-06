@@ -7,8 +7,46 @@
 #include "player.h"
 #include "renderer.h"
 #include <SFML/Graphics.hpp>
+#include <chrono>
 
 int main() {
+
+  auto start = std::chrono::high_resolution_clock::now();
+
+  Game game;
+
+  game.shuffleDeck();
+
+  game.addPlayer(Player("chris", 1, Strategy::colour));
+  game.addPlayer(Player("leah", 2, Strategy::number));
+
+  game.dealStartingCards(game.HAND_SIZE);
+
+  while (true) {
+
+      game.play();
+
+      if (game.hasPlayerWon()) {
+        game.awardWin();
+        if (game.hasPlayerWonNGames(game.REQ_WINS)) { 
+          auto end = std::chrono::high_resolution_clock::now();
+          auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+          game.logWins("../game_log.txt", duration.count());
+          return 0;
+        }
+
+        game.finishAndRestart();
+        continue;
+      }
+      
+      game.advanceTurn();
+  }
+  return 0;
+}
+
+int main_render() {
+  auto start = std::chrono::high_resolution_clock::now();
+
    sf::RenderWindow window(sf::VideoMode(800, 600), "Uno Algo");
 
   Game game;
@@ -34,8 +72,10 @@ int main() {
 
       if (game.hasPlayerWon()) {
         game.awardWin();
-        if (game.hasPlayerWonNGames(game.REQ_WINS)) { 
-          game.logWins("../game_log.txt");
+        if (game.hasPlayerWonNGames(game.REQ_WINS)) {
+          auto end = std::chrono::high_resolution_clock::now();
+          auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+          game.logWins("../game_log.txt", duration.count());
           return 0;
         }
 

@@ -16,7 +16,7 @@ class Game {
         std::vector<Player> players;
         int turn{0};
         int HAND_SIZE{7};
-        int REQ_WINS{5};
+        int REQ_WINS{10};
 
         // Constructor
         Game();
@@ -56,6 +56,6 @@ class Game {
         void awardWin();
         bool hasPlayerWon();
         bool hasPlayerWonNGames(int requiredWins);
-        void logWins(const std::string& filename);
+        void logWins(const std::string& filename, int elapsedTime);
         void finishAndRestart();
 };

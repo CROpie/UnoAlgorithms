@@ -8,9 +8,8 @@ std::vector<Card> Deck::generateAllCards() {
                 cards.emplace_back(colour, value);
             } else {
                 cards.emplace_back(colour, value);
-                // cards.emplace_back(colour, value);
+                cards.emplace_back(colour, value);
             }
-
         }
     }
     return cards;
@@ -24,7 +23,7 @@ void Deck::printDiscard() {
 }
 
 void Deck::shuffle() {
-    std::cout << "--Shuffling the cards--" << std::endl;
+    // std::cout << "--Shuffling the cards--" << std::endl;
     std::random_device rd;
     std::mt19937 g(rd());
     std::shuffle(draw_pile.begin(), draw_pile.end(), g);
