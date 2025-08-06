@@ -110,19 +110,27 @@ void Game::play() {
 
     Card& topOfDiscard = deck.discard_pile.back();
 
-    // topOfDiscard.printCard();
+    if (justPlayed && topOfDiscard.value == Value::skip) return;
+
+    if (justPlayed && topOfDiscard.value == Value::reverse) return;
+
+    if (justPlayed && topOfDiscard.value == Value::drawtwo) {
+        if (deck.draw_pile.empty()) deck.reshuffle();
+        moveTopCard(deck.draw_pile, current.hand);
+        if (deck.draw_pile.empty()) deck.reshuffle();
+        moveTopCard(deck.draw_pile, current.hand);
+        justPlayed = false;
+        return;
+    }
 
     std::vector<Card> filteredHand = filterValidHand(current.hand, topOfDiscard);
 
     if (filteredHand.size() == 0) {
-        // if (deck.draw_pile.empty()) throw std::runtime_error("Error: end of the deck reached in Game::play()");
         if (deck.draw_pile.empty()) deck.reshuffle();
-
         moveTopCard(deck.draw_pile, current.hand);
+        justPlayed = false;
         return;
     }
-
-    // Card validCard = getBackCard(filteredHand);
 
     Card validCard;
 
@@ -139,9 +147,18 @@ void Game::play() {
     }
 
     moveCard(current.hand, deck.discard_pile, validCard);
+    justPlayed = true;
 }
 
 void Game::advanceTurn() {
+    if (onePause) {
+        justPlayed = false;
+        onePause = false;
+    }
+
+    if (justPlayed) {
+        onePause = true;
+    }
     turn = (turn + 1) % players.size();
 }
 
@@ -178,6 +195,8 @@ void Game::logWins(const std::string& filename, int elapsedTime) {
 }
 
 void Game::finishAndRestart() {
+    justPlayed = false;
+    onePause = false;
     resetCards();
     deck.shuffle();
     dealStartingCards(HAND_SIZE);

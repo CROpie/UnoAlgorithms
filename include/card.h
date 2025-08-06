@@ -14,12 +14,17 @@ enum class Value {
     six,
     seven,
     eight,
-    nine
+    nine,
+    reverse,
+    skip,
+    drawtwo
 };
 
-constexpr std::array<Value, 10> all_values = {
+constexpr std::array<Value, 13> all_values = {
     Value::zero, Value::one, Value::two, Value::three, Value::four, 
-    Value::five, Value::six, Value::seven, Value::eight, Value::nine
+    Value::five, Value::six, Value::seven, Value::eight, Value::nine,
+    Value::reverse, Value::skip, Value::drawtwo
+
 };
 
 enum class Colour {

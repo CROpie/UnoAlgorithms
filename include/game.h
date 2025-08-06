@@ -16,7 +16,9 @@ class Game {
         std::vector<Player> players;
         int turn{0};
         int HAND_SIZE{7};
-        int REQ_WINS{10};
+        int REQ_WINS{1000000};
+        bool justPlayed{false};
+        bool onePause{false};
 
         // Constructor
         Game();

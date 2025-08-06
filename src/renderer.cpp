@@ -20,6 +20,9 @@ std::string toVString(Value value) {
         case Value::seven: return "seven";
         case Value::eight: return "eight";
         case Value::nine: return "nine";
+        case Value::reverse: return "reverse";
+        case Value::skip: return "skip";
+        case Value::drawtwo: return "drawtwo";
         default: return "unknown";
     };
 }
@@ -55,6 +58,7 @@ void Renderer::render(const Game& game) {
     window.clear();
 
     for (const Player& player : game.players) {
+
         int yPos = player.playerNumber == 1 ? TOP : BOTTOM;
 
         int yOffset = 0;

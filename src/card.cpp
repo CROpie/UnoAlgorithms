@@ -13,6 +13,9 @@ std::string toString(Value value) {
         case Value::seven: return "seven";
         case Value::eight: return "eight";
         case Value::nine: return "nine";
+        case Value::reverse: return "reverse";
+        case Value::skip: return "skip";
+        case Value::drawtwo: return "drawtwo";
         default: return "unknown";
     };
 }
