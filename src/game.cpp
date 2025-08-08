@@ -22,6 +22,13 @@ void Game::resetCards() {
     deck.draw_pile = deck.generateAllCards();
 }
 
+void Game::randomStartingPlayer(int playerCount) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dist(0, playerCount - 1);
+    turn = dist(gen);
+}
+
 // Printing
 
 void Game::printDiscard() {
@@ -62,6 +69,8 @@ void Game::dealToPlayers(int cardCount) {
 void Game::dealStartingCards(int cardCount = 7) {
     dealToPlayers(cardCount);
     moveTopCard(deck.draw_pile, deck.discard_pile);
+    if (deck.discard_pile.back().colour == Colour::black) wildChoice = Colour::red;
+
 }
 
 // FILTERING CARDS
@@ -75,6 +84,16 @@ void Game::dealStartingCards(int cardCount = 7) {
 std::vector<Card> Game::filterValidHand(std::vector<Card>& hand, Card& topOfDiscard) {
 
     std::vector<Card> filtered;
+
+    if (topOfDiscard.colour == Colour::black) {
+        for(const auto& card : hand) {
+            if (card.colour == wildChoice) filtered.emplace_back(card);
+            if (card.colour == Colour::black) filtered.emplace_back(card);
+        }
+
+        return filtered;
+    }
+
     for(const auto& card : hand) {
         if (card.isValid(topOfDiscard)) filtered.emplace_back(card);
     }
@@ -100,6 +119,25 @@ std::vector<Card> Game::filterForSameValue(std::vector<Card>& hand, Card& topOfD
     return filtered;
 }
 
+// CHOOSING A COLOUR TO PLAY FOR WILD CARD
+Colour Game::mostCommonColour(std::vector<Card>& hand) {
+    std::unordered_map<Colour, int> colourCount;
+
+    for (auto& card : hand) {
+        colourCount[card.colour]++;
+    }
+
+    Colour maxColour = hand[0].colour;
+    int maxCount = 0;
+    for (auto& [colour, count] : colourCount) {
+        if (count > maxCount) {
+            maxCount = count;
+            maxColour = colour;
+        }
+    }
+    return maxColour;
+}
+
 // MAIN PROCESS
 
 void Game::play() {
@@ -110,11 +148,23 @@ void Game::play() {
 
     Card& topOfDiscard = deck.discard_pile.back();
 
-    if (justPlayed && topOfDiscard.value == Value::skip) return;
+    debug && std::cout << current.name + "'s turn" << std::endl;
 
-    if (justPlayed && topOfDiscard.value == Value::reverse) return;
+    // Player will not get to play a card
+    if (justPlayed && topOfDiscard.value == Value::skip) {
+        debug && std::cout << current.name + " was skipped" << std::endl;
+        justPlayed = false;
+        return;
+    }
+
+    if (justPlayed && topOfDiscard.value == Value::reverse) {
+        debug && std::cout << current.name + " was reversed" << std::endl;
+        justPlayed = false;
+        return;
+    }
 
     if (justPlayed && topOfDiscard.value == Value::drawtwo) {
+        debug && std::cout << current.name + " has to pick up 2" << std::endl;
         if (deck.draw_pile.empty()) deck.reshuffle();
         moveTopCard(deck.draw_pile, current.hand);
         if (deck.draw_pile.empty()) deck.reshuffle();
@@ -123,9 +173,25 @@ void Game::play() {
         return;
     }
 
+    if (justPlayed && topOfDiscard.value == Value::drawfour) {
+        debug && std::cout << current.name + " has to pick up 4" << std::endl;
+        if (deck.draw_pile.empty()) deck.reshuffle();
+        moveTopCard(deck.draw_pile, current.hand);
+        if (deck.draw_pile.empty()) deck.reshuffle();
+        moveTopCard(deck.draw_pile, current.hand);
+        if (deck.draw_pile.empty()) deck.reshuffle();
+        moveTopCard(deck.draw_pile, current.hand);
+        if (deck.draw_pile.empty()) deck.reshuffle();
+        moveTopCard(deck.draw_pile, current.hand);
+        justPlayed = false;
+        return;
+    }
+
+    // Any playable card including wild cards
     std::vector<Card> filteredHand = filterValidHand(current.hand, topOfDiscard);
 
     if (filteredHand.size() == 0) {
+        debug && std::cout << current.name + " has to pick up a card" << std::endl;
         if (deck.draw_pile.empty()) deck.reshuffle();
         moveTopCard(deck.draw_pile, current.hand);
         justPlayed = false;
@@ -134,6 +200,7 @@ void Game::play() {
 
     Card validCard;
 
+    // Return wild card as last resort
     switch (current.strategy) {
         case Strategy::back:
             validCard = getBackCard(filteredHand);
@@ -147,18 +214,23 @@ void Game::play() {
     }
 
     moveCard(current.hand, deck.discard_pile, validCard);
+    if (debug) validCard.printCard();
+
+    // choose what colour to call wild
+    if (validCard.colour == Colour::black) {
+        // switch strategy: most of that colour vs least of that colour vs random of present colours?
+
+        // Most of that colour
+        wildChoice = mostCommonColour(current.hand);
+        debug && std::cout << current.name + " has chosen " + Card::toColString(wildChoice) << std::endl;
+
+    }
+
+
     justPlayed = true;
 }
 
 void Game::advanceTurn() {
-    if (onePause) {
-        justPlayed = false;
-        onePause = false;
-    }
-
-    if (justPlayed) {
-        onePause = true;
-    }
     turn = (turn + 1) % players.size();
 }
 
@@ -168,7 +240,7 @@ void Game::awardWin() {
 
 bool Game::hasPlayerWon() {
     if (players[turn].hand.size() == 0) {
-        // std::cout << players[turn].name + " has won the game!" << std::endl;
+        debug && std::cout << players[turn].name + " has won the game!" << std::endl;
         return true;
     }
     return false;
@@ -200,6 +272,7 @@ void Game::finishAndRestart() {
     resetCards();
     deck.shuffle();
     dealStartingCards(HAND_SIZE);
+    randomStartingPlayer(players.size());
 }
 
 // Card Choice Algorithms

@@ -18,7 +18,7 @@ int main() {
   game.shuffleDeck();
 
   game.addPlayer(Player("chris", 1, Strategy::colour));
-  game.addPlayer(Player("leah", 2, Strategy::back));
+  game.addPlayer(Player("leah", 2, Strategy::number));
 
   game.dealStartingCards(game.HAND_SIZE);
 
@@ -57,6 +57,7 @@ int main_render() {
   game.addPlayer(Player("leah", 2, Strategy::back));
 
   game.dealStartingCards(game.HAND_SIZE);
+  game.randomStartingPlayer(game.players.size());
 
   Renderer renderer(window);
 

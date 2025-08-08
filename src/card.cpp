@@ -1,7 +1,7 @@
 #include "card.h"
 
 // printing a card
-std::string toString(Value value) {
+std::string Card::toValString(Value value) {
     switch (value) {
         case Value::zero: return "zero";
         case Value::one: return "one";
@@ -16,16 +16,19 @@ std::string toString(Value value) {
         case Value::reverse: return "reverse";
         case Value::skip: return "skip";
         case Value::drawtwo: return "drawtwo";
+        case Value::wild: return "wild";
+        case Value::drawfour: return "drawfour";
         default: return "unknown";
     };
 }
 
-std::string toString(Colour colour) {
+std::string Card::toColString(Colour colour) {
     switch (colour) {
         case Colour::red: return "red";
         case Colour::yellow: return "yellow";
         case Colour::green: return "green";
         case Colour::blue: return "blue";
+        case Colour::black: return "black";
         default: return "unknown";
     };
 }
@@ -37,11 +40,11 @@ Card::Card()
     : colour(Colour::red), value(Value::zero) {}
 
 std::string Card::toString() {
-    return "{ " + ::toString(this->colour) + " " + ::toString(this->value) + " }";
+    return "{ " + toColString(this->colour) + " " + toValString(this->value) + " }";
 }
 
-std::string Card::getTextureKey() const {
-    return ::toString(this->colour) + "_" + ::toString(this->value);
+std::string Card::getTextureKey() {
+    return toColString(this->colour) + "_" + toValString(this->value);
 }
 
 void Card::printCard() {
@@ -58,6 +61,7 @@ bool Card::cmpValue(const Card& other) const {
 
 bool Card::isValid(const Card& other) const {
     if ((this->colour == other.colour) || (this->value == other.value)) return true;
+    if (this->colour == Colour::black) return true;
     return false;
 }
 

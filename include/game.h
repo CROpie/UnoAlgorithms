@@ -7,6 +7,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <unordered_map>
 
 #pragma once
 
@@ -19,6 +20,8 @@ class Game {
         int REQ_WINS{1000000};
         bool justPlayed{false};
         bool onePause{false};
+        Colour wildChoice;
+        bool debug{false};
 
         // Constructor
         Game();
@@ -26,6 +29,7 @@ class Game {
         // starting the game
         void shuffleDeck();
         void addPlayer(Player&& player);
+        void randomStartingPlayer(int playerCount);
 
         void resetCards();
 
@@ -37,10 +41,13 @@ class Game {
         void dealStartingCards(int cardCount);
         void dealToPlayers(int cardCount);
 
-        // Card Filtering Cards
+        // Filtering Cards
         std::vector<Card> filterValidHand(std::vector<Card>& hand, Card& topOfDiscard);
         std::vector<Card> filterForSameColour(std::vector<Card>& hand, Card& topOfDiscard);
         std::vector<Card> filterForSameValue(std::vector<Card>& hand, Card& topOfDiscard);
+
+        // Choosing a colour to choose for wild
+        Colour mostCommonColour(std::vector<Card>& hand);
 
         // Card Choice Algorithms
         Card getBackCard(std::vector<Card>& filteredHand);

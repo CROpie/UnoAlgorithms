@@ -3,7 +3,21 @@
 std::vector<Card> Deck::generateAllCards() {
     std::vector<Card> cards;
     for (auto colour : all_colours) {
+        if (colour == Colour::black) {
+            cards.emplace_back(colour, Value::wild);
+            cards.emplace_back(colour, Value::wild);
+            cards.emplace_back(colour, Value::wild);
+            cards.emplace_back(colour, Value::wild);
+            cards.emplace_back(colour, Value::drawfour);
+            cards.emplace_back(colour, Value::drawfour);
+            cards.emplace_back(colour, Value::drawfour);
+            cards.emplace_back(colour, Value::drawfour);
+            continue;
+        }
+
         for (auto value : all_values) {
+            if (value == Value::wild || value == Value::drawfour) continue;
+            
             if (value == Value::zero) {
                 cards.emplace_back(colour, value);
             } else {

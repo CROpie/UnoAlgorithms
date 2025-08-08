@@ -9,7 +9,7 @@ class Renderer {
         Renderer(sf::RenderWindow& window);
         sf::Font font;
 
-        void render(const Game& game);
+        void render(Game& game);
 
     private:
         sf::RenderWindow& window;

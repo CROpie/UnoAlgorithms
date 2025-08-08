@@ -50,3 +50,23 @@ Player: Number, Wins: 877640
 Player: Colour, Wins: 1000000
 Player: Back, Wins: 944278
 ----------------------
+ Game completed in 86482489 microseconds. Required wins: 1000000
+Player: Colour, Wins: 1000000
+Player: Number, Wins: 807278
+----------------------
+ Game completed in 83506225 microseconds. Required wins: 1000000
+Player: Colour, Wins: 1000000
+Player: Number, Wins: 809829
+----------------------
+ Game completed in 83701154 microseconds. Required wins: 1000000
+Player: Colour, Wins: 1000000
+Player: Number, Wins: 807351
+----------------------
+ Game completed in 107131135 microseconds. Required wins: 1000000
+Player: Colour, Wins: 1000000
+Player: Number, Wins: 811368
+----------------------
+ Game completed in 103973498 microseconds. Required wins: 1000000
+Player: Colour, Wins: 1000000
+Player: Number, Wins: 813414
+----------------------
