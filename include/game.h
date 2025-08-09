@@ -61,6 +61,7 @@ class Game {
 
         // Main process
         void play();
+        bool doesPlayerLoseTurn(Player& player, Value topOfDiscardValue);
         void advanceTurn();
         void awardWin();
         bool hasPlayerWon();

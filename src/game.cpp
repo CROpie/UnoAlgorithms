@@ -140,6 +140,39 @@ Colour Game::mostCommonColour(std::vector<Card>& hand) {
 
 // MAIN PROCESS
 
+bool Game::doesPlayerLoseTurn(Player& player, Value topOfDiscardValue) {
+    if (!justPlayed) return false;
+    justPlayed = false;
+    int cardsToDraw = 0;
+    int loseTurn = false;
+    switch (topOfDiscardValue) {
+        case Value::skip:
+            debug && std::cout << player.name + " was skipped" << std::endl;
+            loseTurn = true;
+            break;
+        case Value::reverse:
+            debug && std::cout << player.name + " was reversed" << std::endl;
+            loseTurn = true;
+            break;
+        case Value::drawtwo:
+            debug && std::cout << player.name + " has to draw 2" << std::endl;
+            loseTurn = true;
+            cardsToDraw = 2;
+            break;
+        case Value::drawfour:
+            debug && std::cout << player.name + " has to draw 4" << std::endl;
+            loseTurn = true;
+            cardsToDraw = 4;
+            break;
+    }
+    
+    for (int i = 0; i < cardsToDraw; i++) {
+        if (deck.draw_pile.empty()) deck.reshuffle();
+        moveTopCard(deck.draw_pile, player.hand);
+    }
+    return loseTurn;
+}
+
 void Game::play() {
     if (turn >= players.size()) throw std::runtime_error("Error: invalid turn index in Game::play()");
     if (deck.discard_pile.empty()) throw std::runtime_error("Error: discard pile is empty in Game::play()");
@@ -151,41 +184,7 @@ void Game::play() {
     debug && std::cout << current.name + "'s turn" << std::endl;
 
     // Player will not get to play a card
-    if (justPlayed && topOfDiscard.value == Value::skip) {
-        debug && std::cout << current.name + " was skipped" << std::endl;
-        justPlayed = false;
-        return;
-    }
-
-    if (justPlayed && topOfDiscard.value == Value::reverse) {
-        debug && std::cout << current.name + " was reversed" << std::endl;
-        justPlayed = false;
-        return;
-    }
-
-    if (justPlayed && topOfDiscard.value == Value::drawtwo) {
-        debug && std::cout << current.name + " has to pick up 2" << std::endl;
-        if (deck.draw_pile.empty()) deck.reshuffle();
-        moveTopCard(deck.draw_pile, current.hand);
-        if (deck.draw_pile.empty()) deck.reshuffle();
-        moveTopCard(deck.draw_pile, current.hand);
-        justPlayed = false;
-        return;
-    }
-
-    if (justPlayed && topOfDiscard.value == Value::drawfour) {
-        debug && std::cout << current.name + " has to pick up 4" << std::endl;
-        if (deck.draw_pile.empty()) deck.reshuffle();
-        moveTopCard(deck.draw_pile, current.hand);
-        if (deck.draw_pile.empty()) deck.reshuffle();
-        moveTopCard(deck.draw_pile, current.hand);
-        if (deck.draw_pile.empty()) deck.reshuffle();
-        moveTopCard(deck.draw_pile, current.hand);
-        if (deck.draw_pile.empty()) deck.reshuffle();
-        moveTopCard(deck.draw_pile, current.hand);
-        justPlayed = false;
-        return;
-    }
+    if (doesPlayerLoseTurn(current, topOfDiscard.value)) return;
 
     // Any playable card including wild cards
     std::vector<Card> filteredHand = filterValidHand(current.hand, topOfDiscard);
@@ -197,6 +196,7 @@ void Game::play() {
         justPlayed = false;
         return;
     }
+
 
     Card validCard;
 
@@ -223,7 +223,6 @@ void Game::play() {
         // Most of that colour
         wildChoice = mostCommonColour(current.hand);
         debug && std::cout << current.name + " has chosen " + Card::toColString(wildChoice) << std::endl;
-
     }
 
 

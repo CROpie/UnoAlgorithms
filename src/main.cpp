@@ -9,7 +9,7 @@
 #include <SFML/Graphics.hpp>
 #include <chrono>
 
-int main() {
+int main_norender() {
 
   auto start = std::chrono::high_resolution_clock::now();
 
@@ -69,7 +69,7 @@ int main_render() {
       game.play();
       renderer.render(game);
 
-      sf::sleep(sf::milliseconds(2000));
+      sf::sleep(sf::milliseconds(200));
 
       if (game.hasPlayerWon()) {
         game.awardWin();
@@ -87,4 +87,18 @@ int main_render() {
       game.advanceTurn();
   }
   return 0;
+}
+
+int main(int argc, char* argv[]) {
+  std::string choice = argv[1] ? argv[1] : "";
+
+  int response = 0;
+
+  if (choice == "render") {
+    response = main_render();
+  } else {
+    response = main_norender();
+  }
+
+  return response;
 }
