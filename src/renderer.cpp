@@ -64,7 +64,7 @@ void Renderer::render(Game& game) {
 
         yOffset += 30;
         playerText.setPosition(RIGHT_PADDING, yPos + yOffset);
-        playerText.setString(strategyToString(player.strategy));
+        playerText.setString(player.strategyName);
         window.draw(playerText);
 
         yOffset += 30;

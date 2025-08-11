@@ -43,17 +43,26 @@ class Game {
 
         // Filtering Cards
         std::vector<Card> filterValidHand(std::vector<Card>& hand, Card& topOfDiscard);
+        std::vector<Card> filterForSameColourOrValue(std::vector<Card>& hand, Card& topOfDiscard);
+        std::vector<Card> filterForSameColourAndValue(std::vector<Card>& hand, Card& topOfDiscard);
         std::vector<Card> filterForSameColour(std::vector<Card>& hand, Card& topOfDiscard);
+        std::vector<Card> filterForSameColourPlain(std::vector<Card>& hand, Card& topOfDiscard);
         std::vector<Card> filterForSameValue(std::vector<Card>& hand, Card& topOfDiscard);
 
         // Choosing a colour to choose for wild
         Colour mostCommonColour(std::vector<Card>& hand);
 
         // Card Choice Algorithms
-        Card getBackCard(std::vector<Card>& filteredHand);
-        Card getSameColourCard(std::vector<Card>& filteredHand, Card& topOfDiscard);
-        Card getSameValueCard(std::vector<Card>& filteredHand, Card& topOfDiscard);
+        bool getSameColourOrValue(std::vector<Card>& filteredHand, Card& topOfDiscard, Card& cardToPlay);
+        bool getSameColourCard(std::vector<Card>& filteredHand, Card& topOfDiscard, Card& cardToPlay);
+        bool getSameColourCardPlain(std::vector<Card>& filteredHand, Card& topOfDiscard, Card& cardToPlay);
+        bool getSameValueCard(std::vector<Card>& filteredHand, Card& topOfDiscard, Card& cardToPlay);
 
+        bool getSpecificCard(std::vector<Card>& filteredHand, Card specificCard, Card& cardToPlay);
+
+
+        std::vector<Condition> validateConditions(Player& current, Player& opponent);
+        Card chooseCardFromActionPriority(std::vector<Card>& filteredHand, Card& topOfDiscard, std::vector<PlayAction>& actions);
 
         // Printing to terminal
         void printTurn();

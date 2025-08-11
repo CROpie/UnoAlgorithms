@@ -74,3 +74,19 @@ Player: Number, Wins: 813414
 Player: Colour, Wins: 1000000
 Player: Number, Wins: 814462
 ----------------------
+ Game completed in 115891563 microseconds. Required wins: 1000000
+Player: ColourFirst, Wins: 1000000
+Player: NumberFirst, Wins: 916402
+----------------------
+ Game completed in 104709976 microseconds. Required wins: 1000000
+Player: ColourFirst, Wins: 1000000
+Player: NumberFirst, Wins: 827184
+----------------------
+ Game completed in 119368349 microseconds. Required wins: 1000000
+Player: ColourFirst, Wins: 1000000
+Player: NumberFirst, Wins: 917343
+----------------------
+ Game completed in 132741047 microseconds. Required wins: 1000000
+Player: OppHasN -> Default, Wins: 998399
+Player: Random, Wins: 1000000
+----------------------

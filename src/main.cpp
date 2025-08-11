@@ -17,8 +17,8 @@ int main_norender() {
 
   game.shuffleDeck();
 
-  game.addPlayer(Player("chris", 1, Strategy::colour));
-  game.addPlayer(Player("leah", 2, Strategy::number));
+  game.addPlayer(Player("player", 1, p1ConditionList, "OppHasN -> Default"));
+  game.addPlayer(Player("control", 2, p2ConditionList, "Random"));
 
   game.dealStartingCards(game.HAND_SIZE);
 
@@ -53,8 +53,8 @@ int main_render() {
 
   game.shuffleDeck();
 
-  game.addPlayer(Player("chris", 1, Strategy::colour));
-  game.addPlayer(Player("leah", 2, Strategy::back));
+  game.addPlayer(Player("player", 1, p1ConditionList, "OppHasN -> Default"));
+  game.addPlayer(Player("control", 2, p2ConditionList, "Random"));
 
   game.dealStartingCards(game.HAND_SIZE);
   game.randomStartingPlayer(game.players.size());
@@ -69,7 +69,7 @@ int main_render() {
       game.play();
       renderer.render(game);
 
-      sf::sleep(sf::milliseconds(200));
+      sf::sleep(sf::milliseconds(1000));
 
       if (game.hasPlayerWon()) {
         game.awardWin();

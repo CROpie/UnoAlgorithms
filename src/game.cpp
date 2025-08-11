@@ -101,9 +101,40 @@ std::vector<Card> Game::filterValidHand(std::vector<Card>& hand, Card& topOfDisc
     return filtered;
 }
 
+std::vector<Card> Game::filterForSameColourAndValue(std::vector<Card>& hand, Card& topOfDiscard) {
+    std::vector<Card> filtered;
+    for(auto card : hand) {
+        if (card.cmpColour(topOfDiscard) && card.cmpValue(topOfDiscard)) filtered.emplace_back(card);
+    }
+
+    return filtered;
+}
+
+
+std::vector<Card> Game::filterForSameColourOrValue(std::vector<Card>& hand, Card& topOfDiscard) {
+    std::vector<Card> filtered;
+    for(auto card : hand) {
+        if (card.cmpColour(topOfDiscard) || card.cmpValue(topOfDiscard)) filtered.emplace_back(card);
+    }
+
+    return filtered;
+}
+
 std::vector<Card> Game::filterForSameColour(std::vector<Card>& hand, Card& topOfDiscard) {
     std::vector<Card> filtered;
     for(auto card : hand) {
+        if (card.cmpColour(topOfDiscard)) filtered.emplace_back(card);
+    }
+
+    return filtered;
+}
+
+std::vector<Card> Game::filterForSameColourPlain(std::vector<Card>& hand, Card& topOfDiscard) {
+    std::vector<Card> filtered;
+    for(auto card : hand) {
+        if (card.value == Value::drawtwo) continue;
+        if (card.value == Value::skip) continue;
+        if (card.value == Value::reverse) continue;
         if (card.cmpColour(topOfDiscard)) filtered.emplace_back(card);
     }
 
@@ -178,6 +209,7 @@ void Game::play() {
     if (deck.discard_pile.empty()) throw std::runtime_error("Error: discard pile is empty in Game::play()");
     
     Player& current = players[turn];
+    Player& next = players[(turn + 1) % players.size()];
 
     Card& topOfDiscard = deck.discard_pile.back();
 
@@ -197,21 +229,12 @@ void Game::play() {
         return;
     }
 
+    std::vector<Condition> validConditions = validateConditions(current, next);
 
-    Card validCard;
+    // perhaps could update this to use compound conditions somehow (??)
+    Condition priorityCondition = validConditions.front();
 
-    // Return wild card as last resort
-    switch (current.strategy) {
-        case Strategy::back:
-            validCard = getBackCard(filteredHand);
-            break;
-        case Strategy::colour:
-            validCard = getSameColourCard(filteredHand, topOfDiscard);
-            break;
-        case Strategy::number:
-            validCard = getSameValueCard(filteredHand, topOfDiscard);
-            break;
-    }
+    Card validCard = chooseCardFromActionPriority(filteredHand, topOfDiscard, priorityCondition.actionPriorityList);
 
     moveCard(current.hand, deck.discard_pile, validCard);
     if (debug) validCard.printCard();
@@ -258,7 +281,7 @@ void Game::logWins(const std::string& filename, int elapsedTime) {
     if (!logFile.is_open()) throw std::runtime_error("Error: unable to open log file in Game::logWins()");
     logFile << " Game completed in " << elapsedTime << " microseconds. Required wins: " << REQ_WINS << "\n";
     for (const auto& player : players) {
-        logFile << "Player: " << strategyToString(player.strategy) << ", Wins: " << player.wins << "\n";
+        logFile << "Player: " << player.strategyName << ", Wins: " << player.wins << "\n";
     }
     logFile << "----------------------\n";
 
@@ -275,20 +298,99 @@ void Game::finishAndRestart() {
 }
 
 // Card Choice Algorithms
-Card Game::getBackCard(std::vector<Card>& filteredHand) {
-    return filteredHand.back();
+
+// random non-wild card
+bool Game::getSameColourOrValue(std::vector<Card>& filteredHand, Card& topOfDiscard, Card& cardToPlay) {
+    std::vector<Card> subset = filterForSameColourOrValue(filteredHand, topOfDiscard);
+
+    if (filteredHand.size() == 0) return false;
+    cardToPlay = filteredHand.back();
+    return true;
 }
 
-Card Game::getSameColourCard(std::vector<Card>& filteredHand, Card& topOfDiscard) {
+// random same colour card
+bool Game::getSameColourCard(std::vector<Card>& filteredHand, Card& topOfDiscard, Card& cardToPlay) {
     std::vector<Card> subset = filterForSameColour(filteredHand, topOfDiscard);
 
-    if (subset.size() == 0) return filteredHand.back();
-    return subset.back();
+    if (subset.size() == 0) return false;
+    cardToPlay = subset.back();
+    return true;
 }
 
-Card Game::getSameValueCard(std::vector<Card>& filteredHand, Card& topOfDiscard) {
+// random same colour card (no special cards allowed)
+bool Game::getSameColourCardPlain(std::vector<Card>& filteredHand, Card& topOfDiscard, Card& cardToPlay) {
+    std::vector<Card> subset = filterForSameColourPlain(filteredHand, topOfDiscard);
+
+    if (subset.size() == 0) return false;
+    cardToPlay = subset.back();
+    return true;
+}
+
+// random same value card
+bool Game::getSameValueCard(std::vector<Card>& filteredHand, Card& topOfDiscard, Card& cardToPlay) {
     std::vector<Card> subset = filterForSameValue(filteredHand, topOfDiscard);
 
-    if (subset.size() == 0) return filteredHand.back();
-    return subset.back();
+    if (subset.size() == 0) return false;
+    cardToPlay = filteredHand.back();
+    return true;
+}
+
+// Had to use either Card instead of Card& because "initial value of reference to non-const must be an lvalue"
+bool Game::getSpecificCard(std::vector<Card>& filteredHand, Card specificCard, Card& cardToPlay) {
+    std::vector<Card> subset = filterForSameColourAndValue(filteredHand, specificCard);
+
+    if (subset.size() == 0) return false;
+    cardToPlay = filteredHand.back();
+    return true;  
+}
+
+// Figure out which conditions are valid
+std::vector<Condition> Game::validateConditions(Player& current, Player& opponent) {
+    std::vector<Condition> validConditions;
+
+    for (auto& cond : current.strategy) {
+        switch (cond.name) {
+            case ConditionName::OPPONENT_HOLDS_N_CARDS:
+                if (opponent.hand.size() == cond.modifier) validConditions.emplace_back(ConditionName::OPPONENT_HOLDS_N_CARDS);
+                break;
+            default:
+                validConditions.emplace_back(ConditionName::DEFAULT);
+                break;
+        }
+    }
+
+    return validConditions;
+}
+
+Card Game::chooseCardFromActionPriority(std::vector<Card>& filteredHand, Card& topOfDiscard, std::vector<PlayAction>& actions) {
+    Card cardToPlay;
+    for (auto& action : actions) {
+        switch (action) {
+            case PlayAction::DRAW_FOUR:
+                if (getSpecificCard(filteredHand, {Colour::black, Value::drawfour}, cardToPlay)) return cardToPlay;
+                break;
+            case PlayAction::WILD:
+                if (getSpecificCard(filteredHand, {Colour::black, Value::wild}, cardToPlay)) return cardToPlay;
+                break;
+            case PlayAction::DRAW_TWO:
+                if (getSpecificCard(filteredHand, {topOfDiscard.colour, Value::drawtwo}, cardToPlay)) return cardToPlay;
+                break;
+            case PlayAction::SKIP:
+                if (getSpecificCard(filteredHand, {topOfDiscard.colour, Value::skip}, cardToPlay)) return cardToPlay;
+                if (getSpecificCard(filteredHand, {topOfDiscard.colour, Value::reverse}, cardToPlay)) return cardToPlay;
+                break;
+            case PlayAction::FOLLOW_COLOUR_PLAIN:
+                if (getSameColourCardPlain(filteredHand, topOfDiscard, cardToPlay)) return cardToPlay;
+                break;
+            case PlayAction::FOLLOW_VALUE:
+                if (getSameValueCard(filteredHand, topOfDiscard, cardToPlay)) return cardToPlay;
+                break;
+            case PlayAction::RANDOM:
+            default:
+                return filteredHand.back();
+        }
+    }
+
+    // not possible
+    return filteredHand.back();
 }
