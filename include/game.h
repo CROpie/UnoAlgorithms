@@ -58,11 +58,18 @@ class Game {
         bool getSameColourCardPlain(std::vector<Card>& filteredHand, Card& topOfDiscard, Card& cardToPlay);
         bool getSameValueCard(std::vector<Card>& filteredHand, Card& topOfDiscard, Card& cardToPlay);
 
+
         bool getSpecificCard(std::vector<Card>& filteredHand, Card specificCard, Card& cardToPlay);
 
+        // Version for just checking, not returning a card
+        bool getSpecificCard(std::vector<Card>& filteredHand, Card specificCard);
+        bool getSameColourCardPlain(std::vector<Card>& filteredHand, Card& topOfDiscard);
+        bool getSameValueCard(std::vector<Card>& filteredHand, Card& topOfDiscard);
 
         std::vector<Condition> validateConditions(Player& current, Player& opponent);
+        std::vector<PlayAction> validateActions(std::vector<Card>& filteredHand, Card& topOfDiscard, std::vector<PlayAction>& actions);
         Card chooseCardFromActionPriority(std::vector<Card>& filteredHand, Card& topOfDiscard, std::vector<PlayAction>& actions);
+        Card chooseCardFromValidAction(std::vector<Card>& filteredHand, Card& topOfDiscard, PlayAction& action);
 
         // Printing to terminal
         void printTurn();

@@ -31,7 +31,7 @@ std::vector<PlayAction> p1OpponentHasNAction = {
 
 Condition p1OpponentHasNCondition = {
     ConditionName::OPPONENT_HOLDS_N_CARDS,
-    1,
+    2,
     p1OpponentHasNAction
 };
 
@@ -86,4 +86,25 @@ void Player::printCards(std::vector<Card> cards) {
 
 void Player::printDeckSize() {
     std::cout << this->hand.size() << std::endl;
+}
+
+std::string Player::toPlayActionString(PlayAction action) {
+    switch (action) {
+        case PlayAction::DRAW_FOUR: return "draw four";
+        case PlayAction::WILD: return "wild";
+        case PlayAction::DRAW_TWO: return "draw two";
+        case PlayAction::SKIP: return "skip";
+        case PlayAction::FOLLOW_COLOUR_PLAIN: return "follow colour plain";
+        case PlayAction::FOLLOW_VALUE: return "follow value";
+        case PlayAction::RANDOM: return "random";
+        default: return "unknown";
+    };
+}
+
+std::string Player::toConditionNameString(Condition condition) {
+    switch (condition.name) {
+        case ConditionName::OPPONENT_HOLDS_N_CARDS: return "opponent holds n cards";
+        case ConditionName::DEFAULT: return "default";
+        default: return "unknown";
+    };
 }

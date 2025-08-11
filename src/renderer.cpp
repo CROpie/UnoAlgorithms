@@ -53,11 +53,13 @@ void Renderer::render(Game& game) {
 
         int yPos = player.playerNumber == 1 ? TOP : BOTTOM;
 
+        sf::Color nameCol = player.playerNumber == game.players[game.turn].playerNumber ? CURRENT_COLOUR : TEXT_COLOUR;
+
         int yOffset = 0;
         sf::Text playerText;
         playerText.setFont(font);
         playerText.setCharacterSize(FONT_SIZE);
-        playerText.setFillColor(TEXT_COLOUR);
+        playerText.setFillColor(nameCol);
         playerText.setPosition(RIGHT_PADDING, yPos + yOffset);
         playerText.setString(player.name);
         window.draw(playerText);
@@ -71,6 +73,20 @@ void Renderer::render(Game& game) {
         playerText.setPosition(RIGHT_PADDING, yPos + yOffset);
         playerText.setString(std::to_string(player.wins));
         window.draw(playerText);
+
+        if (player.selectedCondition.has_value()) {
+            yOffset += 30;
+            playerText.setPosition(RIGHT_PADDING, yPos + yOffset);
+            playerText.setString(player.toConditionNameString(player.selectedCondition.value()));
+            window.draw(playerText);
+        }
+
+        if (player.selectedAction.has_value()) {
+            yOffset += 30;
+            playerText.setPosition(RIGHT_PADDING, yPos + yOffset);
+            playerText.setString(player.toPlayActionString(player.selectedAction.value()));
+            window.draw(playerText);
+        }
 
         int offset = 0;
         for (Card& card : player.hand) {

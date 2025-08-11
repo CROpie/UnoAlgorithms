@@ -26,6 +26,7 @@ class Renderer {
         int FONT_SIZE = 20;
         int RIGHT_PADDING = 600;
         sf::Color TEXT_COLOUR = sf::Color::White;
+        sf::Color CURRENT_COLOUR = sf::Color::Yellow;
 
         void loadTextures();
 };

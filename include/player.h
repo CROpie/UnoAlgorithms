@@ -1,6 +1,7 @@
 #include "card.h"
 #include <vector>
 #include <string>
+#include <optional>
 
 #pragma once
 
@@ -39,6 +40,9 @@ class Player {
         std::vector<Card> hand;
         int wins{0};
 
+        std::optional<Condition> selectedCondition;
+        std::optional<PlayAction> selectedAction;
+
         Player(std::string name, int playerNumber, std::vector<Condition> strategy, std::string strategyName);
 
         void clearHand();
@@ -48,5 +52,7 @@ class Player {
         void printCards(std::vector<Card> cards);
         void printDeckSize();
 
+        static std::string toConditionNameString(Condition condition);
+        static std::string toPlayActionString(PlayAction action);
 
 };

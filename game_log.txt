@@ -90,3 +90,20 @@ Player: NumberFirst, Wins: 917343
 Player: OppHasN -> Default, Wins: 998399
 Player: Random, Wins: 1000000
 ----------------------
+(Exactly 1 card)
+ Game completed in 192601512 microseconds. Required wins: 1000000
+Player: OppHasN -> Default, Wins: 1000000
+Player: Random, Wins: 974936
+----------------------
+ Game completed in 201333222 microseconds. Required wins: 1000000
+Player: OppHasN -> Default, Wins: 1000000
+Player: Random, Wins: 998626
+----------------------
+ Game completed in 205342909 microseconds. Required wins: 1000000
+Player: OppHasN -> Default, Wins: 1000000
+Player: Random, Wins: 974974
+----------------------
+ Game completed in 204025546 microseconds. Required wins: 1000000
+Player: OppHasN -> Default, Wins: 1000000
+Player: Random, Wins: 975007
+----------------------

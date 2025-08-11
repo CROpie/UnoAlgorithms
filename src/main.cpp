@@ -60,16 +60,29 @@ int main_render() {
   game.randomStartingPlayer(game.players.size());
 
   Renderer renderer(window);
+  renderer.render(game);
 
   while (window.isOpen()) {
+    bool keyPressed = false;
     sf::Event event;
-    while (window.pollEvent(event))
-      if (event.type == sf::Event::Closed) window.close();
+    // while (window.pollEvent(event))
+    //   if (event.type == sf::Event::Closed) window.close();
+    while (window.waitEvent(event)) {
+      if (event.type == sf::Event::Closed) {
+        window.close();
+        break;
+      }
+
+      if (event.type == sf::Event::KeyPressed) {
+        keyPressed = true;
+        break;
+      }
+    }
 
       game.play();
       renderer.render(game);
 
-      sf::sleep(sf::milliseconds(1000));
+      // sf::sleep(sf::milliseconds(1000));
 
       if (game.hasPlayerWon()) {
         game.awardWin();

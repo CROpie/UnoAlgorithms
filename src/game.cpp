@@ -233,8 +233,14 @@ void Game::play() {
 
     // perhaps could update this to use compound conditions somehow (??)
     Condition priorityCondition = validConditions.front();
+    current.selectedCondition = priorityCondition;
 
-    Card validCard = chooseCardFromActionPriority(filteredHand, topOfDiscard, priorityCondition.actionPriorityList);
+    // for debug only (?)
+    std::vector<PlayAction> validActions = validateActions(filteredHand, topOfDiscard, priorityCondition.actionPriorityList);
+    current.selectedAction = validActions.front();
+
+    // Card validCard = chooseCardFromActionPriority(filteredHand, topOfDiscard, priorityCondition.actionPriorityList);
+    Card validCard = chooseCardFromValidAction(filteredHand, topOfDiscard, current.selectedAction.value());
 
     moveCard(current.hand, deck.discard_pile, validCard);
     if (debug) validCard.printCard();
@@ -344,6 +350,31 @@ bool Game::getSpecificCard(std::vector<Card>& filteredHand, Card specificCard, C
     return true;  
 }
 
+
+/* DEBUG */
+
+// Version for just checking, not returning a card
+bool Game::getSameColourCardPlain(std::vector<Card>& filteredHand, Card& topOfDiscard) {
+    std::vector<Card> subset = filterForSameColourPlain(filteredHand, topOfDiscard);
+
+    if (subset.size() == 0) return false;
+    return true;
+}
+
+bool Game::getSameValueCard(std::vector<Card>& filteredHand, Card& topOfDiscard) {
+    std::vector<Card> subset = filterForSameValue(filteredHand, topOfDiscard);
+
+    if (subset.size() == 0) return false;
+    return true;
+}
+
+bool Game::getSpecificCard(std::vector<Card>& filteredHand, Card specificCard) {
+    std::vector<Card> subset = filterForSameColourAndValue(filteredHand, specificCard);
+
+    if (subset.size() == 0) return false;
+    return true;  
+}
+
 // Figure out which conditions are valid
 std::vector<Condition> Game::validateConditions(Player& current, Player& opponent) {
     std::vector<Condition> validConditions;
@@ -351,10 +382,10 @@ std::vector<Condition> Game::validateConditions(Player& current, Player& opponen
     for (auto& cond : current.strategy) {
         switch (cond.name) {
             case ConditionName::OPPONENT_HOLDS_N_CARDS:
-                if (opponent.hand.size() == cond.modifier) validConditions.emplace_back(ConditionName::OPPONENT_HOLDS_N_CARDS);
+                if (opponent.hand.size() <= cond.modifier) validConditions.emplace_back(cond);
                 break;
             default:
-                validConditions.emplace_back(ConditionName::DEFAULT);
+                validConditions.emplace_back(cond);
                 break;
         }
     }
@@ -362,6 +393,72 @@ std::vector<Condition> Game::validateConditions(Player& current, Player& opponen
     return validConditions;
 }
 
+// Only for debug chooseCardFromActionPriority makes more sense..
+std::vector<PlayAction> Game::validateActions(std::vector<Card>& filteredHand, Card& topOfDiscard, std::vector<PlayAction>& actions) {
+    std::vector<PlayAction> validActions;
+    for (auto& action : actions) {
+        switch (action) {
+            case PlayAction::DRAW_FOUR:
+                if (getSpecificCard(filteredHand, {Colour::black, Value::drawfour})) validActions.emplace_back(PlayAction::DRAW_FOUR);
+                break;
+            case PlayAction::WILD:
+                if (getSpecificCard(filteredHand, {Colour::black, Value::wild})) validActions.emplace_back(PlayAction::WILD);
+                break;
+            case PlayAction::DRAW_TWO:
+                if (getSpecificCard(filteredHand, {topOfDiscard.colour, Value::drawtwo})) validActions.emplace_back(PlayAction::DRAW_TWO);
+                break;
+            case PlayAction::SKIP:
+                if (getSpecificCard(filteredHand, {topOfDiscard.colour, Value::skip}) || 
+                    getSpecificCard(filteredHand, {topOfDiscard.colour, Value::reverse})) validActions.emplace_back(PlayAction::SKIP);
+                break;
+            case PlayAction::FOLLOW_COLOUR_PLAIN:
+                if (getSameColourCardPlain(filteredHand, topOfDiscard)) validActions.emplace_back(PlayAction::FOLLOW_COLOUR_PLAIN);
+                break;
+            case PlayAction::FOLLOW_VALUE:
+                if (getSameValueCard(filteredHand, topOfDiscard)) validActions.emplace_back(PlayAction::FOLLOW_VALUE);
+                break;
+            case PlayAction::RANDOM:
+            default:
+                validActions.emplace_back(PlayAction::RANDOM);
+        }
+    }
+
+    return validActions;
+}
+
+Card Game::chooseCardFromValidAction(std::vector<Card>& filteredHand, Card& topOfDiscard, PlayAction& action) {
+    Card cardToPlay;
+        switch (action) {
+            case PlayAction::DRAW_FOUR:
+                if (getSpecificCard(filteredHand, {Colour::black, Value::drawfour}, cardToPlay)) return cardToPlay;
+                break;
+            case PlayAction::WILD:
+                if (getSpecificCard(filteredHand, {Colour::black, Value::wild}, cardToPlay)) return cardToPlay;
+                break;
+            case PlayAction::DRAW_TWO:
+                if (getSpecificCard(filteredHand, {topOfDiscard.colour, Value::drawtwo}, cardToPlay)) return cardToPlay;
+                break;
+            case PlayAction::SKIP:
+                if (getSpecificCard(filteredHand, {topOfDiscard.colour, Value::skip}, cardToPlay)) return cardToPlay;
+                if (getSpecificCard(filteredHand, {topOfDiscard.colour, Value::reverse}, cardToPlay)) return cardToPlay;
+                break;
+            case PlayAction::FOLLOW_COLOUR_PLAIN:
+                if (getSameColourCardPlain(filteredHand, topOfDiscard, cardToPlay)) return cardToPlay;
+                break;
+            case PlayAction::FOLLOW_VALUE:
+                if (getSameValueCard(filteredHand, topOfDiscard, cardToPlay)) return cardToPlay;
+                break;
+            case PlayAction::RANDOM:
+            default:
+                return filteredHand.back();
+        }
+    
+    // not possible
+    return filteredHand.back();
+}
+
+
+// ~ Combination of the above 2 functions
 Card Game::chooseCardFromActionPriority(std::vector<Card>& filteredHand, Card& topOfDiscard, std::vector<PlayAction>& actions) {
     Card cardToPlay;
     for (auto& action : actions) {
