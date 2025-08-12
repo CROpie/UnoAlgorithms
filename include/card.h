@@ -58,6 +58,7 @@ class Card {
         bool cmpColour(const Card& other) const;
         bool cmpValue(const Card& other) const;
         bool isValid(const Card& other) const;
+        bool isPlain();
 
         bool operator==(const Card& other) const;
 };

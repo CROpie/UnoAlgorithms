@@ -68,3 +68,11 @@ bool Card::isValid(const Card& other) const {
 bool Card::operator==(const Card& other) const {
     return ((this->colour == other.colour) && (this->value == other.value));
 }
+
+bool Card::isPlain() {
+    if (this->colour == Colour::black) return false;
+    if (this->value == Value::drawtwo ||
+        this->value == Value::skip ||
+        this->value == Value::reverse) return false;
+    return true;
+}

@@ -107,3 +107,43 @@ Player: Random, Wins: 974974
 Player: OppHasN -> Default, Wins: 1000000
 Player: Random, Wins: 975007
 ----------------------
+ Game completed in 223543964 microseconds. Required wins: 1000000
+Player: OppHasN -> Default, Wins: 1000000
+Player: Random, Wins: 990770
+----------------------
+ Game completed in 216481442 microseconds. Required wins: 1000000
+Player: OppHasN -> Default, Wins: 1000000
+Player: Random, Wins: 973681
+----------------------
+ Game completed in 221806697 microseconds. Required wins: 1000000
+Player: OppHasN -> Default, Wins: 1000000
+Player: Random, Wins: 974241
+----------------------
+ Game completed in 221767918 microseconds. Required wins: 1000000
+Player: OppHasN -> Default, Wins: 1000000
+Player: Random, Wins: 956344
+----------------------
+ Game completed in 220240151 microseconds. Required wins: 1000000
+Player: OppHasN -> Default, Wins: 1000000
+Player: Random, Wins: 944877
+----------------------
+ Game completed in 252022734 microseconds. Required wins: 1000000
+Player: OppHasN -> Default, Wins: 1000000
+Player: Random, Wins: 930717
+----------------------
+ Game completed in 222605399 microseconds. Required wins: 1000000
+Player: OppHasN -> Default, Wins: 1000000
+Player: Random, Wins: 919526
+----------------------
+ Game completed in 207436051 microseconds. Required wins: 1000000
+Player: OppHasN -> Default, Wins: 1000000
+Player: Random, Wins: 919721
+----------------------
+ Game completed in 210862586 microseconds. Required wins: 1000000
+Player: OppHasN -> Default, Wins: 1000000
+Player: Random, Wins: 920469
+----------------------
+ Game completed in 230214367 microseconds. Required wins: 1000000
+Player: OppHasN -> Default, Wins: 1000000
+Player: Random, Wins: 709956
+----------------------

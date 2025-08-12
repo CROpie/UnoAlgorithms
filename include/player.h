@@ -17,6 +17,9 @@ enum class PlayAction {
 
 enum class ConditionName {
     OPPONENT_HOLDS_N_CARDS,
+    OPPONENT_PLAYED_N_COLOUR_IN_A_ROW,
+    OPPONENT_HAD_TO_PICK_UP,
+    PLAYER_HOLDS_N_CARDS,
     DEFAULT
 };
 
@@ -39,6 +42,8 @@ class Player {
         std::string strategyName;
         std::vector<Card> hand;
         int wins{0};
+        std::vector<Colour> playedColours;
+        bool hadToPickUp{false};
 
         std::optional<Condition> selectedCondition;
         std::optional<PlayAction> selectedAction;

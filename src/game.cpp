@@ -132,6 +132,7 @@ std::vector<Card> Game::filterForSameColour(std::vector<Card>& hand, Card& topOf
 std::vector<Card> Game::filterForSameColourPlain(std::vector<Card>& hand, Card& topOfDiscard) {
     std::vector<Card> filtered;
     for(auto card : hand) {
+        if (card.colour == Colour::black) continue;
         if (card.value == Value::drawtwo) continue;
         if (card.value == Value::skip) continue;
         if (card.value == Value::reverse) continue;
@@ -226,6 +227,7 @@ void Game::play() {
         if (deck.draw_pile.empty()) deck.reshuffle();
         moveTopCard(deck.draw_pile, current.hand);
         justPlayed = false;
+        current.hadToPickUp = true;
         return;
     }
 
@@ -243,6 +245,9 @@ void Game::play() {
     Card validCard = chooseCardFromValidAction(filteredHand, topOfDiscard, current.selectedAction.value());
 
     moveCard(current.hand, deck.discard_pile, validCard);
+    current.playedColours.emplace_back(validCard.colour);
+    current.hadToPickUp = false;
+
     if (debug) validCard.printCard();
 
     // choose what colour to call wild
@@ -254,6 +259,15 @@ void Game::play() {
         debug && std::cout << current.name + " has chosen " + Card::toColString(wildChoice) << std::endl;
     }
 
+    // Penalty for not finishing with plain card
+    if (current.hand.empty() && !validCard.isPlain()) {
+        debug && std::cout << current.name + " was penalized for not finishing with a number" << std::endl;
+        if (deck.draw_pile.empty()) deck.reshuffle();
+        moveTopCard(deck.draw_pile, current.hand);
+        justPlayed = true;
+        current.hadToPickUp = true;
+        return;  
+    }
 
     justPlayed = true;
 }
@@ -296,11 +310,13 @@ void Game::logWins(const std::string& filename, int elapsedTime) {
 
 void Game::finishAndRestart() {
     justPlayed = false;
-    onePause = false;
     resetCards();
     deck.shuffle();
     dealStartingCards(HAND_SIZE);
     randomStartingPlayer(players.size());
+    for (auto& player : players) {
+        player.playedColours.clear();
+    }
 }
 
 // Card Choice Algorithms
@@ -309,8 +325,8 @@ void Game::finishAndRestart() {
 bool Game::getSameColourOrValue(std::vector<Card>& filteredHand, Card& topOfDiscard, Card& cardToPlay) {
     std::vector<Card> subset = filterForSameColourOrValue(filteredHand, topOfDiscard);
 
-    if (filteredHand.size() == 0) return false;
-    cardToPlay = filteredHand.back();
+    if (subset.empty()) return false;
+    cardToPlay = subset.back();
     return true;
 }
 
@@ -318,7 +334,7 @@ bool Game::getSameColourOrValue(std::vector<Card>& filteredHand, Card& topOfDisc
 bool Game::getSameColourCard(std::vector<Card>& filteredHand, Card& topOfDiscard, Card& cardToPlay) {
     std::vector<Card> subset = filterForSameColour(filteredHand, topOfDiscard);
 
-    if (subset.size() == 0) return false;
+    if (subset.empty()) return false;
     cardToPlay = subset.back();
     return true;
 }
@@ -327,7 +343,7 @@ bool Game::getSameColourCard(std::vector<Card>& filteredHand, Card& topOfDiscard
 bool Game::getSameColourCardPlain(std::vector<Card>& filteredHand, Card& topOfDiscard, Card& cardToPlay) {
     std::vector<Card> subset = filterForSameColourPlain(filteredHand, topOfDiscard);
 
-    if (subset.size() == 0) return false;
+    if (subset.empty()) return false;
     cardToPlay = subset.back();
     return true;
 }
@@ -336,8 +352,8 @@ bool Game::getSameColourCardPlain(std::vector<Card>& filteredHand, Card& topOfDi
 bool Game::getSameValueCard(std::vector<Card>& filteredHand, Card& topOfDiscard, Card& cardToPlay) {
     std::vector<Card> subset = filterForSameValue(filteredHand, topOfDiscard);
 
-    if (subset.size() == 0) return false;
-    cardToPlay = filteredHand.back();
+    if (subset.empty()) return false;
+    cardToPlay = subset.back();
     return true;
 }
 
@@ -345,8 +361,8 @@ bool Game::getSameValueCard(std::vector<Card>& filteredHand, Card& topOfDiscard,
 bool Game::getSpecificCard(std::vector<Card>& filteredHand, Card specificCard, Card& cardToPlay) {
     std::vector<Card> subset = filterForSameColourAndValue(filteredHand, specificCard);
 
-    if (subset.size() == 0) return false;
-    cardToPlay = filteredHand.back();
+    if (subset.empty()) return false;
+    cardToPlay = subset.back();
     return true;  
 }
 
@@ -381,9 +397,39 @@ std::vector<Condition> Game::validateConditions(Player& current, Player& opponen
 
     for (auto& cond : current.strategy) {
         switch (cond.name) {
+            case ConditionName::PLAYER_HOLDS_N_CARDS:
+                if (current.hand.size() <= cond.modifier) validConditions.emplace_back(cond);
+                break;
             case ConditionName::OPPONENT_HOLDS_N_CARDS:
                 if (opponent.hand.size() <= cond.modifier) validConditions.emplace_back(cond);
                 break;
+            case ConditionName::OPPONENT_HAD_TO_PICK_UP:
+                if (opponent.hadToPickUp) validConditions.emplace_back(cond);
+                break;
+            case ConditionName::OPPONENT_PLAYED_N_COLOUR_IN_A_ROW:
+            {
+
+                if (opponent.playedColours.empty()) break;
+
+                int last = opponent.playedColours.size() - 1;
+
+                bool shouldExit = false;
+                for (int i = 0; i < cond.modifier; i++) {
+                    if (last - i < 0) {
+                        shouldExit = true;
+                        break;
+                    }
+                    if (opponent.playedColours[last] != opponent.playedColours[last - i]) {
+                        shouldExit = true;
+                        break;
+                    }
+                }
+
+                if (shouldExit) break;
+                
+                validConditions.emplace_back(cond);
+                break;
+            }
             default:
                 validConditions.emplace_back(cond);
                 break;
