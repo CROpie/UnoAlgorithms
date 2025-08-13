@@ -3,6 +3,9 @@
 #include <card.h>
 #include <string.h>
 #include <player.h>
+#include <strategy.h>
+
+#pragma once
 
 class Renderer {
     public:

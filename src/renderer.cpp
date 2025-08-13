@@ -66,7 +66,7 @@ void Renderer::render(Game& game) {
 
         yOffset += 30;
         playerText.setPosition(RIGHT_PADDING, yPos + yOffset);
-        playerText.setString(player.strategyName);
+        playerText.setString(player.strategy.name);
         window.draw(playerText);
 
         yOffset += 30;
@@ -77,14 +77,14 @@ void Renderer::render(Game& game) {
         if (player.selectedCondition.has_value()) {
             yOffset += 30;
             playerText.setPosition(RIGHT_PADDING, yPos + yOffset);
-            playerText.setString(player.toConditionNameString(player.selectedCondition.value()));
+            playerText.setString(Strategy::toConditionNameString(player.selectedCondition.value()));
             window.draw(playerText);
         }
 
         if (player.selectedAction.has_value()) {
             yOffset += 30;
             playerText.setPosition(RIGHT_PADDING, yPos + yOffset);
-            playerText.setString(player.toPlayActionString(player.selectedAction.value()));
+            playerText.setString(Strategy::toPlayActionString(player.selectedAction.value()));
             window.draw(playerText);
         }
 

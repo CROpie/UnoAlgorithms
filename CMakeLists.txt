@@ -36,7 +36,7 @@ find_package(SFML 2.5 REQUIRED COMPONENTS graphics window system)
 
 set(CMAKE_BUILD_TYPE Debug)  # Enables -g and disables optimizations
 
-add_executable(uno_algo src/main.cpp src/card.cpp src/deck.cpp src/player.cpp src/game.cpp src/renderer.cpp)
+add_executable(uno_algo src/main.cpp src/card.cpp src/deck.cpp src/player.cpp src/game.cpp src/renderer.cpp src/strategy.cpp)
 
 # Link SFML and card lib
 

@@ -17,7 +17,7 @@ class Game {
         std::vector<Player> players;
         int turn{0};
         int HAND_SIZE{7};
-        int REQ_WINS{1000000};
+        int REQ_WINS{10000};
         bool justPlayed{false};
         bool onePause{false};
         Colour wildChoice;
@@ -28,7 +28,7 @@ class Game {
 
         // starting the game
         void shuffleDeck();
-        void addPlayer(Player&& player);
+        void addPlayer(Player& player);
         void randomStartingPlayer(int playerCount);
 
         void resetCards();
@@ -65,6 +65,7 @@ class Game {
         bool getSpecificCard(std::vector<Card>& filteredHand, Card specificCard);
         bool getSameColourCardPlain(std::vector<Card>& filteredHand, Card& topOfDiscard);
         bool getSameValueCard(std::vector<Card>& filteredHand, Card& topOfDiscard);
+        void getRandomCard(std::vector<Card>& filteredHand, Card& cardToPlay);
 
         std::vector<Condition> validateConditions(Player& current, Player& opponent);
         std::vector<PlayAction> validateActions(std::vector<Card>& filteredHand, Card& topOfDiscard, std::vector<PlayAction>& actions);
@@ -82,6 +83,7 @@ class Game {
         void awardWin();
         bool hasPlayerWon();
         bool hasPlayerWonNGames(int requiredWins);
-        void logWins(const std::string& filename, int elapsedTime);
+        void logData(const std::string& filename, int elapsedTime);
+        void logWins(const std::string& filename);
         void finishAndRestart();
 };

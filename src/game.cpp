@@ -4,7 +4,7 @@ Game::Game()
     : deck() {}
 
 // Game Set-Up
-void Game::addPlayer(Player&& player) {
+void Game::addPlayer(Player& player) {
     players.emplace_back(std::move(player));
 }
 
@@ -231,14 +231,15 @@ void Game::play() {
         return;
     }
 
+    // perhaps could update this to use compound conditions somehow (??)
     std::vector<Condition> validConditions = validateConditions(current, next);
 
-    // perhaps could update this to use compound conditions somehow (??)
-    Condition priorityCondition = validConditions.front();
-    current.selectedCondition = priorityCondition;
+    Condition selectedCondition = validConditions.empty() ? p2ConditionList[0] : validConditions.front();
+    current.selectedCondition = selectedCondition;
 
     // for debug only (?)
-    std::vector<PlayAction> validActions = validateActions(filteredHand, topOfDiscard, priorityCondition.actionPriorityList);
+    std::vector<PlayAction> validActions = validateActions(filteredHand, topOfDiscard, selectedCondition.actionPriorityList);
+
     current.selectedAction = validActions.front();
 
     // Card validCard = chooseCardFromActionPriority(filteredHand, topOfDiscard, priorityCondition.actionPriorityList);
@@ -295,15 +296,42 @@ bool Game::hasPlayerWonNGames(int requiredWins) {
     return false;
 }
 
-void Game::logWins(const std::string& filename, int elapsedTime) {
+void Game::logData(const std::string& filename, int elapsedTime) {
     std::ofstream logFile(filename, std::ios::app);
 
     if (!logFile.is_open()) throw std::runtime_error("Error: unable to open log file in Game::logWins()");
-    logFile << " Game completed in " << elapsedTime << " microseconds. Required wins: " << REQ_WINS << "\n";
-    for (const auto& player : players) {
-        logFile << "Player: " << player.strategyName << ", Wins: " << player.wins << "\n";
+    logFile << "Game completed in " << elapsedTime << " microseconds. Required wins: " << REQ_WINS << "\n";
+
+    for (auto it = players.begin(); it != players.end(); ++it) {
+        logFile << it->wins;
+        if (it != players.end() - 1) {
+            logFile << " VS ";
+        } else {
+            logFile << "\n";
+        }
+    }
+
+    for (auto& player : players) {
+        // logFile << "Player: " << player.strategy.name << ", Wins: " << player.wins << "\n";
+        logFile << "Player: " << player.name << "\n" << player.strategy.conditionListToString(player.strategy.conditions) << "\n";
+
     }
     logFile << "----------------------\n";
+
+    logFile.close();
+}
+
+void Game::logWins(const std::string& filename) {
+    std::ofstream logFile(filename, std::ios::app);
+
+    for (auto it = players.begin(); it != players.end(); ++it) {
+        logFile << it->wins;
+        if (it != players.end() - 1) {
+            logFile << " VS ";
+        } else {
+            logFile << "\n";
+        }
+    }
 
     logFile.close();
 }
@@ -366,6 +394,16 @@ bool Game::getSpecificCard(std::vector<Card>& filteredHand, Card specificCard, C
     return true;  
 }
 
+// random same value card
+void Game::getRandomCard(std::vector<Card>& filteredHand, Card& cardToPlay) {
+
+    std::random_device rd;
+    std::mt19937 rng(rd());
+    std::shuffle(filteredHand.begin(), filteredHand.end(), rng);
+
+    cardToPlay = filteredHand.back();
+}
+
 
 /* DEBUG */
 
@@ -395,7 +433,7 @@ bool Game::getSpecificCard(std::vector<Card>& filteredHand, Card specificCard) {
 std::vector<Condition> Game::validateConditions(Player& current, Player& opponent) {
     std::vector<Condition> validConditions;
 
-    for (auto& cond : current.strategy) {
+    for (auto& cond : current.strategy.conditions) {
         switch (cond.name) {
             case ConditionName::PLAYER_HOLDS_N_CARDS:
                 if (current.hand.size() <= cond.modifier) validConditions.emplace_back(cond);
@@ -430,6 +468,9 @@ std::vector<Condition> Game::validateConditions(Player& current, Player& opponen
                 validConditions.emplace_back(cond);
                 break;
             }
+            case ConditionName::DEFAULT:
+                validConditions.emplace_back(cond);
+                break;
             default:
                 validConditions.emplace_back(cond);
                 break;
@@ -496,7 +537,8 @@ Card Game::chooseCardFromValidAction(std::vector<Card>& filteredHand, Card& topO
                 break;
             case PlayAction::RANDOM:
             default:
-                return filteredHand.back();
+                 getRandomCard(filteredHand, cardToPlay);
+                 return cardToPlay;
         }
     
     // not possible
@@ -530,7 +572,8 @@ Card Game::chooseCardFromActionPriority(std::vector<Card>& filteredHand, Card& t
                 break;
             case PlayAction::RANDOM:
             default:
-                return filteredHand.back();
+                 getRandomCard(filteredHand, cardToPlay);
+                 return cardToPlay;
         }
     }
 
